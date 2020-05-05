@@ -12,7 +12,7 @@ class AppointmentsRepository {
     /**
      * Retorna todos os agendamentos
      */
-    public all() {
+    public all(): Appointment[] {
         return this.appointments;
     }
 
