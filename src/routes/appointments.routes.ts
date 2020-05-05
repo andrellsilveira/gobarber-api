@@ -16,6 +16,12 @@ const appointmentsRouter = Router();
 /** Importa o repositório */
 const appointmentsRepository = new AppointmentsRepository();
 
+appointmentsRouter.get('/', (request, response) => {
+    const appointments = appointmentsRepository.all();
+
+    return response.json(appointments);
+});
+
 /**
  * Não é necessário apontar o recurso na rota "/appointments", pois essa indicação já está 
  * sendo realizada no arquivo index.ts

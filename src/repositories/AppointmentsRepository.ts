@@ -10,6 +10,13 @@ class AppointmentsRepository {
     }
 
     /**
+     * Retorna todos os agendamentos
+     */
+    public all() {
+        return this.appointments;
+    }
+
+    /**
      * Método que buscará um objeto a apartir de uma data
      * Retorno: Appointment ou nulo
      * @param date 
