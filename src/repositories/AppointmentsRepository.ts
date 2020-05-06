@@ -2,6 +2,11 @@ import { isEqual } from 'date-fns';
 
 import Appointment from '../models/Appointment';
 
+interface CreateRepositoryDTO {
+    provider: string;
+    date: Date;
+}
+
 class AppointmentsRepository {
     private appointments: Appointment[];
 
@@ -39,8 +44,9 @@ class AppointmentsRepository {
      * @param provider 
      * @param date 
      */
-    public create(provider: string, date: Date): Appointment {
-        const appointment = new Appointment(provider, date);
+    public create(data: /** Aqui é possível desestruturar: { provider, date } */ CreateRepositoryDTO): Appointment {
+        const appointment = new Appointment(data);
+        /** Utilizando com desestruturação: const appointment = new Appointment(provider, date); */
 
         this.appointments.push(appointment);
 
