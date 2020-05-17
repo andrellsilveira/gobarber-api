@@ -1,6 +1,16 @@
 // Ao utilizar entity do TypeORM a geração do UUID é realizada pelo Decorator
 // import { uuid } from 'uuidv4';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    CreateDateColumn,
+    UpdateDateColumn,
+    ManyToOne,
+    JoinColumn,
+} from 'typeorm';
+
+import User from './User';
 
 /**
  * O Decorator "@Entity" é utilizado para indicar a qual tabela esse model faz referência.
@@ -20,10 +30,32 @@ class Appointment {
      * a coluna é do tipo varchar
      */
     @Column()
-    provider: string;
+    provider_id: string;
+
+    /**
+     * O Decorator "@ManyToOne" indica que um prestador (User) pode ter vários
+     * agendamentos (Appointments)
+     */
+    @ManyToOne(() => User)
+    /**
+     * O Decorator "@JoinColumn" indica com qual atributo a instância da classe externa
+     * vai se relacionar
+     */
+    @JoinColumn({ name: 'provider_id' })
+    /**
+     * Ess propriedade é necessária para termos o relacionamento entre o model de
+     * Appointment e o model User
+     */
+    provider: User;
 
     @Column('time with time zone')
     date: Date;
+
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
 
     /*
      * A função helper "Omit" permite indicar os atributos da classe que não poderão ser passados
