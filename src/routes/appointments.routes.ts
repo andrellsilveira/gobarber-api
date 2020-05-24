@@ -15,8 +15,18 @@ import AppointmentsRepository from '../repositories/AppointmentsRepository';
  */
 import CreateAppointmentService from '../services/CreateAppointmentService';
 
+/**
+ * Importa o middleware de autenticação
+ */
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+
 /** Instancia o express */
 const appointmentsRouter = Router();
+
+/**
+ * Define o uso do middleware de autenticação para todas as rotas de agendamentos
+ */
+appointmentsRouter.use(ensureAuthenticated);
 
 appointmentsRouter.get('/', async (request, response) => {
     /**
