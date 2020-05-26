@@ -2,6 +2,7 @@ import { getRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
+import AppError from '../errors/AppError';
 import User from '../models/User';
 import authConfig from '../config/auth';
 
@@ -24,13 +25,13 @@ class CreateSessionService {
         });
 
         if (!user) {
-            throw new Error('E-mail e/ou senha incorretos.');
+            throw new AppError('E-mail e/ou senha incorretos.', 401);
         }
 
         const passwordMatched = await compare(data.password, user.password);
 
         if (!passwordMatched) {
-            throw new Error('E-mail e/ou senha incorretos.');
+            throw new AppError('E-mail e/ou senha incorretos.', 401);
         }
 
         /**

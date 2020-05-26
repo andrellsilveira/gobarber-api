@@ -1,6 +1,7 @@
 import { getRepository } from 'typeorm';
 import { hash } from 'bcryptjs';
 
+import AppError from '../errors/AppError';
 import User from '../models/User';
 
 interface RequestDTO {
@@ -18,7 +19,7 @@ class CreateUserService {
         });
 
         if (checkUserExists) {
-            throw new Error('O e-mail informado já está sendo utilizado.');
+            throw new AppError('O e-mail informado já está sendo utilizado.');
         }
 
         /**

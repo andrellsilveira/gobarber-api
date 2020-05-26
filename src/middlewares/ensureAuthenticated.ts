@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 
+import AppError from '../errors/AppError';
 import authConfig from '../config/auth';
 
 /**
@@ -30,7 +31,7 @@ export default function ensureAuthenticated(
      * Se não for encontrado o cabeçalho de autenticação dispara um erro
      */
     if (!authHeader) {
-        throw new Error('Token JWT não encontrado.');
+        throw new AppError('Token JWT não encontrado.', 401);
     }
 
     /**
@@ -65,6 +66,6 @@ export default function ensureAuthenticated(
 
         return next();
     } catch {
-        throw new Error('Token JWT inválido');
+        throw new AppError('Token JWT inválido', 401);
     }
 }
