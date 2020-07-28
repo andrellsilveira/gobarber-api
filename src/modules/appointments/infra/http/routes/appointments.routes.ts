@@ -9,16 +9,16 @@ import { getCustomRepository } from 'typeorm';
 /**
  * Importa a classe AppointmentsRepository
  */
-import AppointmentsRepository from '../repositories/AppointmentsRepository';
+import AppointmentsRepository from '@modules/appointments/repositories/AppointmentsRepository';
 /**
  * Importa o service de criação de um agendamento
  */
-import CreateAppointmentService from '../services/CreateAppointmentService';
+import CreateAppointmentService from '@modules/appointments/services/CreateAppointmentService';
 
 /**
  * Importa o middleware de autenticação
  */
-import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 
 /** Instancia o express */
 const appointmentsRouter = Router();

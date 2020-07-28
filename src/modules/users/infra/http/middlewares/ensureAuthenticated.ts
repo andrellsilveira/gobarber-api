@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 
-import AppError from '../errors/AppError';
-import authConfig from '../config/auth';
+import AppError from '@shared/errors/AppError';
+import authConfig from '@config/auth';
 
 /**
  * É necessário criar essa interface para possibilitar a recuperação dos valores retornados

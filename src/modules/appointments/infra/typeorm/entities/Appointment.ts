@@ -10,7 +10,7 @@ import {
     JoinColumn,
 } from 'typeorm';
 
-import User from './User';
+import User from '@modules/users/infra/typeorm/entities/User';
 
 /**
  * O Decorator "@Entity" é utilizado para indicar a qual tabela esse model faz referência.

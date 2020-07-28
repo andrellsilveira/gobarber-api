@@ -4,12 +4,14 @@ import express from 'express';
 import cors from 'cors';
 /** A importação desse complemento deve ser realizada logo após a importação do Express */
 import 'express-async-errors';
-import './database';
-import routes from './routes';
-import uploadConfig from './config/upload';
-import handlerErrors from './middlewares/handlerErrors';
+
+import '@shared/infra/typeorm';
+import uploadConfig from '@config/upload';
+import handlerErrors from '@shared/infra/http/middlewares/handlerErrors';
+import routes from '@shared/infra/http/routes';
 
 const porta = 3333;
+
 const app = express();
 
 app.use(cors());

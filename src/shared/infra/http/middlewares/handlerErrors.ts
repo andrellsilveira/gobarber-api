@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-import AppError from '../errors/AppError';
+import AppError from '@shared/errors/AppError';
 /**
  * Middleware para tratamento e exibição das mensagens de erro da aplicação.
  * Os middlewares para tratamento de erros devem receber 4 parâmetros.

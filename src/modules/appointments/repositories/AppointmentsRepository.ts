@@ -1,7 +1,7 @@
 // import { isEqual } from 'date-fns';
 import { EntityRepository, Repository } from 'typeorm';
 
-import Appointment from '../models/Appointment';
+import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
 
 /**
  * O Decorator "@EntityRepository" indica qual é o model ao qual esse repositório faz
