@@ -1,2 +1,2 @@
-# template-projeto-nodejs
-Template para projeto NodeJS.
+# gobarber-api
+API do projeto GoBarber Bootcamp Rocketseat.
