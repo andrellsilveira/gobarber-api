@@ -1,24 +1,31 @@
-import { getRepository } from 'typeorm';
-import path from 'path';
-import fs from 'fs';
+import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
 import User from '@modules/users/infra/typeorm/entities/User';
-import uploadConfig from '@config/upload';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 
-interface RequestDTO {
+interface IResquest {
     userId: string;
     avatarFileName: string;
 }
 
+@injectable()
 class UpdateUserAvatarService {
-    public async execute({
-        userId,
-        avatarFileName,
-    }: RequestDTO): Promise<User> {
-        const usersRepository = getRepository(User);
+    private usersRepository: IUsersRepository;
 
-        const user = await usersRepository.findOne(userId);
+    private storageProvider: IStorageProvider;
+
+    constructor(
+        @inject('UsersRepository') repository: IUsersRepository,
+        @inject('StorageProvider') provider: IStorageProvider,
+    ) {
+        this.usersRepository = repository;
+        this.storageProvider = provider;
+    }
+
+    public async execute({ userId, avatarFileName }: IResquest): Promise<User> {
+        const user = await this.usersRepository.findById(userId);
 
         if (!user) {
             throw new AppError(
@@ -32,37 +39,22 @@ class UpdateUserAvatarService {
          */
         if (user.avatar) {
             /**
-             * Recupera o arquivo de avatar do usuário
+             * Exclui o arquivo através do provider
              */
-            const userAvatarFilePath = path.join(
-                uploadConfig.directory,
-                user.avatar,
-            );
-
-            /**
-             * Verifica se o arquivo existe
-             */
-            const userAvatarFileExists = await fs.promises.stat(
-                userAvatarFilePath,
-            );
-
-            if (userAvatarFileExists) {
-                /**
-                 * Exclui o arquivo
-                 */
-                await fs.promises.unlink(userAvatarFilePath);
-            }
+            await this.storageProvider.deleteFile(user.avatar);
         }
 
         /**
          * Atualiza o avatar do usuário com o novo arquivo
          */
-        user.avatar = avatarFileName;
+        const fileName = await this.storageProvider.saveFile(avatarFileName);
+
+        user.avatar = fileName;
 
         /**
          * Salva as alterações realizadas no usuário
          */
-        usersRepository.save(user);
+        await this.usersRepository.save(user);
 
         return user;
     }

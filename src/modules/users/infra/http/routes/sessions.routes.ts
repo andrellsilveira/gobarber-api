@@ -1,26 +1,14 @@
-/**
- * Módulo de agendamentos
- */
-
 import { Router } from 'express';
 
-import CreateSessionService from '@modules/users/services/CreateSessionService';
+import SessionsController from '@modules/users/infra/http/controllers/SessionsController';
 
 const sessionsRouter = Router();
 
-sessionsRouter.post('/', async (request, response) => {
-    const { email, password } = request.body;
+/**
+ * Cria a instância do controlador
+ */
+const sessionsController = new SessionsController();
 
-    const createSession = new CreateSessionService();
-
-    const { user, token } = await createSession.execute({
-        email,
-        password,
-    });
-
-    delete user.password;
-
-    return response.json({ user, token });
-});
+sessionsRouter.post('/', sessionsController.create);
 
 export default sessionsRouter;

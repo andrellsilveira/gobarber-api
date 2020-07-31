@@ -5,7 +5,7 @@ import multer from 'multer';
 /**
  * Define variável com o caminho do diretório temporário
  */
-const tmpDir = path.resolve(__dirname, '..', '..', 'tmp');
+const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp');
 
 /**
  * Configurações para upload de arquivos
@@ -14,7 +14,8 @@ export default {
     /**
      * Define atributo para recuperação do diretório nos módulos do sistema
      */
-    directory: tmpDir,
+    tmpFolder,
+    uploadsFolder: path.resolve(tmpFolder, 'uploads'),
     /**
      * Define armazenamento local
      */
@@ -23,7 +24,7 @@ export default {
          * Define o diretório de destino dos arquivos como "tmp"
          * Os textos "..", signoficam a quantidade de retornos até o diretório "tmp"
          */
-        destination: tmpDir,
+        destination: tmpFolder,
         /**
          * Definição do nome do arquivo
          * - request: Requisição da rota

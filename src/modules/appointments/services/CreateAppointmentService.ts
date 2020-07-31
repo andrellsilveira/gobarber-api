@@ -1,32 +1,35 @@
 import { startOfHour } from 'date-fns';
-import { getCustomRepository } from 'typeorm';
+import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
 import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
-import AppointmentRepository from '@modules/appointments/repositories/AppointmentsRepository';
+import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 
-interface RequestDTO {
+interface IRequest {
     provider_id: string;
     date: Date;
 }
 
+@injectable()
 class CreateAppointmentService {
+    private appointmentsRepository: IAppointmentsRepository;
+
+    constructor(
+        @inject('AppointmentsRepository') repository: IAppointmentsRepository,
+    ) {
+        this.appointmentsRepository = repository;
+    }
+
     public async execute({
         provider_id,
         date,
-    }: RequestDTO): Promise<Appointment> {
-        /**
-         * Recupera o repositório e iniciliza-o na variável
-         */
-        const appointmentsRepository = getCustomRepository(
-            AppointmentRepository,
-        );
+    }: IRequest): Promise<Appointment> {
         /**
          * Trunca a data em uma hora, zerando os minutos, segundos e milisegundos
          * */
         const appointmentDate = startOfHour(date);
 
-        const findAppointmentInSameDate = await appointmentsRepository.findByDate(
+        const findAppointmentInSameDate = await this.appointmentsRepository.findByDate(
             appointmentDate,
         );
 
@@ -43,15 +46,10 @@ class CreateAppointmentService {
          * O método "create" apenas cria uma instância do registro e não o salva no banco de
          * dados. Para salvar é necessário utilizar o método "save"
          */
-        const appointment = appointmentsRepository.create({
+        const appointment = this.appointmentsRepository.create({
             provider_id,
             date: appointmentDate,
         });
-
-        /**
-         * Método utilizado para gravar o registro no banco de dados
-         */
-        await appointmentsRepository.save(appointment);
 
         return appointment;
     }

@@ -1,42 +1,50 @@
-import { getRepository } from 'typeorm';
-import { hash } from 'bcryptjs';
+import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
 import User from '@modules/users/infra/typeorm/entities/User';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import IHashProvider from '@modules/users/providers/HashProvider/models/IHashProvider';
 
-interface RequestDTO {
+interface IRequest {
     name: string;
     email: string;
     password: string;
 }
 
+/** Identifica que a classe recebe injeção de código */
+@injectable()
 class CreateUserService {
-    public async execute(data: RequestDTO): Promise<User> {
-        const usersRepository = getRepository(User);
+    private usersRepository: IUsersRepository;
 
-        const checkUserExists = await usersRepository.findOne({
-            where: { email: data.email },
-        });
+    private hashProvider: IHashProvider;
+
+    constructor(
+        /** Identifica o recurso a ser injetado como parâmetro */
+        @inject('UsersRepository') repository: IUsersRepository,
+        @inject('HashProvider') provider: IHashProvider,
+    ) {
+        this.usersRepository = repository;
+        this.hashProvider = provider;
+    }
+
+    public async execute(data: IRequest): Promise<User> {
+        const checkUserExists = await this.usersRepository.findByEmail(
+            data.email,
+        );
 
         if (checkUserExists) {
             throw new AppError('O e-mail informado já está sendo utilizado.');
         }
 
-        /**
-         * Realiza a criptografia da senha
-         * O segundo parâmetro serve para a geração de um valor aleatório que será concatenado
-         * à senha para fortalecer a criptografia e impedir que uma mesma sequência de caracteres
-         * gere um mesmo hash, nesse caso será gerado um número de 8 dígitos
-         * */
-        const hashedPassword = await hash(data.password, 8);
+        const hashedPassword = await this.hashProvider.generateHash(
+            data.password,
+        );
 
-        const user = usersRepository.create({
+        const user = await this.usersRepository.create({
             name: data.name,
             email: data.email,
             password: hashedPassword,
         });
-
-        await usersRepository.save(user);
 
         return user;
     }

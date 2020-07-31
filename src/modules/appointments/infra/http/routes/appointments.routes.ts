@@ -3,61 +3,37 @@
  */
 
 import { Router } from 'express';
-import { parseISO } from 'date-fns';
-import { getCustomRepository } from 'typeorm';
-
-/**
- * Importa a classe AppointmentsRepository
- */
-import AppointmentsRepository from '@modules/appointments/repositories/AppointmentsRepository';
-/**
- * Importa o service de criação de um agendamento
- */
-import CreateAppointmentService from '@modules/appointments/services/CreateAppointmentService';
 
 /**
  * Importa o middleware de autenticação
  */
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 
+import AppointmentsController from '@modules/appointments/infra/http/controllers/AppointmentsController';
+
 /** Instancia o express */
 const appointmentsRouter = Router();
+
+/** Cria uma instância do controlador */
+const appointmentsController = new AppointmentsController();
 
 /**
  * Define o uso do middleware de autenticação para todas as rotas de agendamentos
  */
 appointmentsRouter.use(ensureAuthenticated);
 
-appointmentsRouter.get('/', async (request, response) => {
-    /**
-     * Recupera o repositório e iniciliza-o na variável
-     */
-    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-    const appointments = await appointmentsRepository.find();
+// appointmentsRouter.get('/', async (request, response) => {
+//     /** Instancia o repositório */
+//     const appointmentsRepository = new AppointmentsRepository();
+//     const appointments = await appointmentsRepository.find();
 
-    return response.json(appointments);
-});
+//     return response.json(appointments);
+// });
 
 /**
  * Não é necessário apontar o recurso na rota "/appointments", pois essa indicação já está
  * sendo realizada no arquivo index.ts
  */
-appointmentsRouter.post('/', async (request, response) => {
-    const { provider_id, date } = request.body;
-
-    /**
-     * Converte a data para o formato ISO
-     * */
-    const parsedDate = parseISO(date);
-
-    const createAppointment = new CreateAppointmentService();
-
-    const appointment = await createAppointment.execute({
-        provider_id,
-        date: parsedDate,
-    });
-
-    return response.json(appointment);
-});
+appointmentsRouter.post('/', appointmentsController.create);
 
 export default appointmentsRouter;

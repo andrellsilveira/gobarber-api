@@ -5,10 +5,11 @@
 import { Router } from 'express';
 import multer from 'multer';
 
-import CreateUserService from '@modules/users/services/CreateUserService';
-import UploadUserAvatarService from '@modules/users/services/UpdateUserAvatarService';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 import uploadConfig from '@config/upload';
+
+import UsersController from '@modules/users/infra/http/controllers/UsersController';
+import UserAvatarController from '@modules/users/infra/http/controllers/UserAvatarController';
 
 const usersRouter = Router();
 
@@ -18,25 +19,13 @@ const usersRouter = Router();
  */
 const upload = multer(uploadConfig);
 
-usersRouter.post('/', async (request, response) => {
-    const { name, email, password } = request.body;
+/**
+ * Cria a instância do controlador
+ */
+const usersController = new UsersController();
+const userAvatarController = new UserAvatarController();
 
-    const createUser = new CreateUserService();
-
-    const user = await createUser.execute({
-        name,
-        email,
-        password,
-    });
-
-    /**
-     * Elimina o atributo dentro dessa instância do objeto
-     * Nesse caso fazemos isso para não retornar a senha, por questões de segurança
-     * */
-    delete user.password;
-
-    return response.json(user);
-});
+usersRouter.post('/', usersController.create);
 
 /**
  * Realiza a alteração do avatar do usuário, onde a chamada do método "upload.single('avatar')"
@@ -47,18 +36,7 @@ usersRouter.patch(
     '/avatar',
     ensureAuthenticated,
     upload.single('avatar'),
-    async (request, response) => {
-        const uploadAvatar = new UploadUserAvatarService();
-
-        const user = await uploadAvatar.execute({
-            userId: request.user.id,
-            avatarFileName: request.file.filename,
-        });
-
-        delete user.password;
-
-        return response.json(user);
-    },
+    userAvatarController.update,
 );
 
 export default usersRouter;
