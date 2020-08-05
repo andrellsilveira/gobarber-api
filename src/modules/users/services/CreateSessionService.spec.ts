@@ -54,7 +54,7 @@ describe('CreateSession', () => {
             fakeHashProvider,
         );
 
-        expect(
+        await expect(
             createSessionService.execute({
                 email: 'ambrosio@teste.com',
                 password: '123456',
@@ -82,7 +82,7 @@ describe('CreateSession', () => {
             fakeHashProvider,
         );
 
-        expect(
+        await expect(
             createSessionService.execute({
                 email: 'ambrosio@teste.com',
                 password: '12345',

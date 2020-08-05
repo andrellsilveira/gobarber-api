@@ -16,8 +16,8 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-/** Define uma rota para visulização dos arquivos de forma estática */
-app.use('/files', express.static(uploadConfig.directory));
+/** Define uma rota para visualização dos arquivos de forma estática */
+app.use('/files', express.static(uploadConfig.uploadsFolder));
 app.use(routes);
 
 /** O middleware para tratamento dos erros deve ser executado após o middleware das rotas */

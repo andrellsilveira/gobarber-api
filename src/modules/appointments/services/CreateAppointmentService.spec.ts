@@ -47,7 +47,7 @@ describe('CreateAppointment', () => {
          * "espera-se que o resultado da criação seja de rejeição, ou seja, que ocorra um erro,
          * e a instância retornada seja um 'AppError'"
          */
-        expect(
+        await expect(
             createAppointmentService.execute({
                 date: appointmentDate,
                 provider_id: '1234567890',

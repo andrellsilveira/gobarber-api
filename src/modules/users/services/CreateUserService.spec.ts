@@ -53,7 +53,7 @@ describe('CreateUser', () => {
          * "espera-se que o resultado da criação seja de rejeição, ou seja, que ocorra um erro,
          * e a instância retornada seja um 'AppError'"
          */
-        expect(
+        await expect(
             createUserService.execute({
                 name: 'Gebedaia Conrado',
                 email: 'conrado@teste.com',
