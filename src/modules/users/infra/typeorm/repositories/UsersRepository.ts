@@ -1,8 +1,9 @@
 // import { isEqual } from 'date-fns';
-import { Repository, getRepository } from 'typeorm';
+import { Repository, getRepository, Not } from 'typeorm';
 
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICreateUserDTO from '@modules/users/dtos/ICreateUserDTO';
+import IFindAllProvidersDTO from '@modules/users/dtos/IFindAllProvidersDTO';
 import User from '@modules/users/infra/typeorm/entities/User';
 
 /**
@@ -23,6 +24,24 @@ class UsersRepository implements IUsersRepository {
          * Inicializa a variável herdando os métodos do TypeORM através do método getRepository
          */
         this.ormRepository = getRepository(User);
+    }
+
+    public async findAllProviders({
+        exceptUserId,
+    }: IFindAllProvidersDTO): Promise<User[]> {
+        let users: User[];
+
+        if (exceptUserId) {
+            users = await this.ormRepository.find({
+                where: {
+                    id: Not(exceptUserId),
+                },
+            });
+        } else {
+            users = await this.ormRepository.find();
+        }
+
+        return users;
     }
 
     public async findById(id: string): Promise<User | undefined> {
