@@ -27,8 +27,6 @@ export default class CreateUserToken1596648621777
                     {
                         name: 'user_id',
                         type: 'uuid',
-                        isNullable: false,
-                        isUnique: true,
                     },
                     {
                         name: 'created_at',

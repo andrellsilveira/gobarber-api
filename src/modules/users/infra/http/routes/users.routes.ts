@@ -1,7 +1,3 @@
-/**
- * Módulo de agendamentos
- */
-
 import { Router } from 'express';
 import multer from 'multer';
 

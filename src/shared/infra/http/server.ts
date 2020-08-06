@@ -1,11 +1,12 @@
 import 'reflect-metadata';
 
 import express from 'express';
-import cors from 'cors';
 /** A importação desse complemento deve ser realizada logo após a importação do Express */
 import 'express-async-errors';
+import cors from 'cors';
 
 import '@shared/infra/typeorm';
+import '@shared/container';
 import uploadConfig from '@config/upload';
 import handlerErrors from '@shared/infra/http/middlewares/handlerErrors';
 import routes from '@shared/infra/http/routes';

@@ -8,7 +8,7 @@ import authConfig from '@config/auth';
  * É necessário criar essa interface para possibilitar a recuperação dos valores retornados
  * para o token pelo cabeçalho da requisição
  */
-interface TokenPayload {
+interface ITokenPayload {
     iat: number;
     exp: number;
     sub: string;
