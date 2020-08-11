@@ -48,6 +48,13 @@ class Appointment {
      */
     provider: User;
 
+    @Column()
+    user_id: string;
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'user_id' })
+    user: User;
+
     @Column('time with time zone')
     date: Date;
 

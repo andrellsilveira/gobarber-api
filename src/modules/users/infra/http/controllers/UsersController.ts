@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 
 import CreateUserService from '@modules/users/services/CreateUserService';
 
@@ -36,9 +37,13 @@ class UsersController {
          * Elimina o atributo dentro dessa instância do objeto
          * Nesse caso fazemos isso para não retornar a senha, por questões de segurança
          * */
-        delete user.password;
+        // delete user.password;
 
-        return response.json(user);
+        /**
+         * O método "classToClass" da biblioteca Class Transformer aplica as transformações
+         * definidas para a classe aos dados que serão retornados
+         */
+        return response.json(classToClass(user));
     }
 }
 

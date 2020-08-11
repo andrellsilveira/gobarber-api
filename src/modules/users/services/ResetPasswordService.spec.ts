@@ -93,7 +93,7 @@ describe('ResetPassword', () => {
         const { token } = await fakeUserTokensRepository.generate(user.id);
 
         /**
-         * A função "mockImplementation" substitiu a execução ortiginal do método pela
+         * A função "mockImplementation" substitiu a execução original do método pela
          * implementação personalizada, ou seja, o comportamento e o retorno do método
          * "espionado" será redefinido pelo script implementado dentro do "mockImplementation"
          * Nesse caso será sobrescrito o comportamento do método "now" do objeto "Date" na sua

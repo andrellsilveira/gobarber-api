@@ -1,12 +1,14 @@
-import { startOfHour } from 'date-fns';
+import { startOfHour, isBefore, getHours, format } from 'date-fns';
 import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
 import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
+import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
 
 interface IRequest {
     provider_id: string;
+    user_id: string;
     date: Date;
 }
 
@@ -14,20 +16,52 @@ interface IRequest {
 class CreateAppointmentService {
     private appointmentsRepository: IAppointmentsRepository;
 
+    private notificationsRepository: INotificationsRepository;
+
     constructor(
-        @inject('AppointmentsRepository') repository: IAppointmentsRepository,
+        @inject('AppointmentsRepository')
+        repositoryAppointments: IAppointmentsRepository,
+        @inject('NotificationsRepository')
+        repositoryNotifications: INotificationsRepository,
     ) {
-        this.appointmentsRepository = repository;
+        this.appointmentsRepository = repositoryAppointments;
+        this.notificationsRepository = repositoryNotifications;
     }
 
     public async execute({
         provider_id,
+        user_id,
         date,
     }: IRequest): Promise<Appointment> {
         /**
          * Trunca a data em uma hora, zerando os minutos, segundos e milisegundos
          * */
         const appointmentDate = startOfHour(date);
+
+        /**
+         * Valida se o horário do agendamento é maior que a data corrente
+         */
+        if (isBefore(appointmentDate, Date.now())) {
+            throw new AppError(
+                'Não é possível realizar um agendamento em um horário que já passou.',
+            );
+        }
+
+        /** Valida que o usuário não pode realizar um agendamento com ele mesmo */
+        if (user_id === provider_id) {
+            throw new AppError(
+                'Não é possível realizar um agendamento consigo mesmo.',
+            );
+        }
+
+        /** Valida que um agendamento só pode ser realizado entre 8 e 17 horas */
+        const appointmentHour = getHours(appointmentDate);
+
+        if (appointmentHour < 8 || appointmentHour > 17) {
+            throw new AppError(
+                'Só é possível realizar um agendamento entre 8 e 17 horas.',
+            );
+        }
 
         const findAppointmentInSameDate = await this.appointmentsRepository.findByDate(
             appointmentDate,
@@ -48,7 +82,15 @@ class CreateAppointmentService {
          */
         const appointment = this.appointmentsRepository.create({
             provider_id,
+            user_id,
             date: appointmentDate,
+        });
+
+        const dateFormated = format(appointmentDate, "dd/MM/yyyy 'às' HH:mm");
+
+        await this.notificationsRepository.create({
+            recipient_id: provider_id,
+            content: `Novo agendamento para a data de ${dateFormated}.`,
         });
 
         return appointment;

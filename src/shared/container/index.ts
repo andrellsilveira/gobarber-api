@@ -10,7 +10,10 @@ import IUserTokensRepository from '@modules/users/repositories/IUserTokensReposi
 import UserTokensRepository from '@modules/users/infra/typeorm/repositories/UserTokensRepository';
 
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
-import AppointmentssRepository from '@modules/appointments/infra/typeorm/repositories/AppointmentsRepository';
+import AppointmentsRepository from '@modules/appointments/infra/typeorm/repositories/AppointmentsRepository';
+
+import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
+import NotificationsRepository from '@modules/notifications/infra/typeorm/repositories/NotificationsRepository';
 
 /**
  * Registra o repositório do tipo "IUsersRepository" apenas uma vez ao longo do ciclo
@@ -28,6 +31,11 @@ container.registerSingleton<IUserTokensRepository>(
 );
 
 container.registerSingleton<IAppointmentsRepository>(
-    'AppointmentssRepository',
-    AppointmentssRepository,
+    'AppointmentsRepository',
+    AppointmentsRepository,
+);
+
+container.registerSingleton<INotificationsRepository>(
+    'NotificationsRepository',
+    NotificationsRepository,
 );

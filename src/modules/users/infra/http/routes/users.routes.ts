@@ -1,5 +1,12 @@
 import { Router } from 'express';
+/**
+ * Biblioteca para gerenciamento do upload de arquivos
+ */
 import multer from 'multer';
+/**
+ * Biblioteca para validação dos dados recebidos por uma rota da aplicação
+ */
+import { celebrate, Segments, Joi } from 'celebrate';
 
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 import uploadConfig from '@config/upload';
@@ -21,7 +28,18 @@ const upload = multer(uploadConfig);
 const usersController = new UsersController();
 const userAvatarController = new UserAvatarController();
 
-usersRouter.post('/', usersController.create);
+usersRouter.post(
+    '/',
+    celebrate({
+        /** Definição do seguimento da rota cujos dados serão validados */
+        [Segments.BODY]: {
+            name: Joi.string().required(),
+            email: Joi.string().email().required(),
+            password: Joi.string().required(),
+        },
+    }),
+    usersController.create,
+);
 
 /**
  * Realiza a alteração do avatar do usuário, onde a chamada do método "upload.single('avatar')"
