@@ -20,7 +20,7 @@ const usersRouter = Router();
  * Cria uma instância do Multer utilizando as configurações definidas no arquivo
  * "config/upload.ts"
  */
-const upload = multer(uploadConfig);
+const upload = multer(uploadConfig.multer);
 
 /**
  * Cria a instância do controlador

@@ -24,15 +24,19 @@ class AppointmentsController {
 
         /**
          * Converte a data para o formato ISO
+         * --------------
+         * Não é mais necessário, pois a conversão está sendo realizada pela biblioteca "Joi"
+         * na validação do campo na rota de appointments
+         * --------------
          * */
-        const parsedDate = parseISO(date);
+        // const parsedDate = parseISO(date);
 
         const createAppointment = container.resolve(CreateAppointmentService);
 
         const appointment = await createAppointment.execute({
             provider_id,
             user_id,
-            date: parsedDate,
+            date,
         });
 
         return response.json(appointment);

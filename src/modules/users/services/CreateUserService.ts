@@ -4,6 +4,7 @@ import AppError from '@shared/errors/AppError';
 import User from '@modules/users/infra/typeorm/entities/User';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IHashProvider from '@modules/users/providers/HashProvider/models/IHashProvider';
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 
 interface IRequest {
     name: string;
@@ -18,13 +19,17 @@ class CreateUserService {
 
     private hashProvider: IHashProvider;
 
+    private cacheProvider: ICacheProvider;
+
     constructor(
         /** Identifica o recurso a ser injetado como parâmetro */
         @inject('UsersRepository') repository: IUsersRepository,
         @inject('HashProvider') provider: IHashProvider,
+        @inject('CacheProvider') cache: ICacheProvider,
     ) {
         this.usersRepository = repository;
         this.hashProvider = provider;
+        this.cacheProvider = cache;
     }
 
     public async execute(data: IRequest): Promise<User> {
@@ -45,6 +50,11 @@ class CreateUserService {
             email: data.email,
             password: hashedPassword,
         });
+
+        /**
+         * Invalida os caches que contenham o prefixo passado para o método
+         */
+        await this.cacheProvider.invalidatePrefix('providers-list');
 
         return user;
     }
