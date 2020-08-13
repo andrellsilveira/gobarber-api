@@ -11,12 +11,14 @@ import '@shared/infra/typeorm';
 import '@shared/container';
 import uploadConfig from '@config/upload';
 import handlerErrors from '@shared/infra/http/middlewares/handlerErrors';
+import rateLimiter from '@shared/infra/http/middlewares/rateLimiter';
 import routes from '@shared/infra/http/routes';
 
 const porta = 3333;
 
 const app = express();
 
+app.use(rateLimiter);
 app.use(cors());
 app.use(express.json());
 /** Define uma rota para visualização dos arquivos de forma estática */
