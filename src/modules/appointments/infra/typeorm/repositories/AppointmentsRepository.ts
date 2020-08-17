@@ -32,7 +32,10 @@ class AppointmentsRepository implements IAppointmentsRepository {
      * Retorno: Appointment ou undefined
      * @param date
      */
-    public async findByDate(date: Date): Promise<Appointment | undefined> {
+    public async findByDate(
+        date: Date,
+        provider_id: string,
+    ): Promise<Appointment | undefined> {
         /**
          * Realiza pesquisa dentro do array para verificar se já existe um objeto com a mesma data
          * do agendamento que está sendo criado
@@ -51,7 +54,7 @@ class AppointmentsRepository implements IAppointmentsRepository {
              * "date" passado para o método
              * A forma abaixo foi reduzida devido ao nome da coluna ser o mesmo do parâmetro
              */
-            where: { date },
+            where: { date, provider_id },
         });
 
         /**
@@ -105,6 +108,8 @@ class AppointmentsRepository implements IAppointmentsRepository {
                         `to_char(${dateFieldName}, 'DD-MM-YYYY') = '${parsedDay}-${parsedMonth}-${year}'`,
                 ),
             },
+            /** Carrega os dados do relacionamento definido dentro da classe (Eager Loading) */
+            relations: ['user'],
         });
 
         return appointments;

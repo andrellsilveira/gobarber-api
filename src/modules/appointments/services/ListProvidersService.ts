@@ -32,8 +32,6 @@ class ListProvidersService {
                 exceptUserId: userId,
             });
 
-            console.log('gravação no banco');
-
             /**
              * Realiza a gravação do cache
              */

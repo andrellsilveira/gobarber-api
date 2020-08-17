@@ -51,7 +51,11 @@ class Appointment {
     @Column()
     user_id: string;
 
-    @ManyToOne(() => User)
+    /**
+     * A propriedade "eager" indica que os dados do objeto relacionado devem ser carregados
+     * automaticamente ao carregar os dados desta classe
+     */
+    @ManyToOne(() => User /* , { eager: true } */)
     @JoinColumn({ name: 'user_id' })
     user: User;
 
