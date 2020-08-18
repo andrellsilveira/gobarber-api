@@ -18,11 +18,11 @@ const porta = 3333;
 
 const app = express();
 
-app.use(rateLimiter);
 app.use(cors());
 app.use(express.json());
 /** Define uma rota para visualização dos arquivos de forma estática */
 app.use('/files', express.static(uploadConfig.uploadsFolder));
+app.use(rateLimiter);
 app.use(routes);
 
 app.use(errors());
